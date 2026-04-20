@@ -1,1 +1,1 @@
-# Webbrowser ChatGPT Responses API
+# Vibe Coding Webbrowser ChatGPT Responses API
