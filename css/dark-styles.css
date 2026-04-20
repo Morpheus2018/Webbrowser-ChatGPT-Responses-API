@@ -1,0 +1,197 @@
+:root {
+    /* Light Theme (Default) */
+    --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f8f9fa;
+    --bg-input: #ffffff;
+
+    --text-primary: #333333;
+    --text-secondary: #4a5568;
+
+    --border-color: #e2e8f0;
+    --border-radius: 12px;
+
+    --shadow-light: 0 10px 25px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 15px 35px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+    --primary-color: #667eea;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-color: #e2e8f0;
+    --success-color: #68d391;
+    --error-color: #fc8181;
+    --warning-color: #f6ad55;
+
+    --set-active: #10a37f;
+    --transition-speed: 0.3s;
+
+    --btn-border-light: #d1d5db;
+    --btn-border-dark: #4b5563;
+
+    --text-muted: #9ca3af;
+    --bot-bubble: #f3f4f6;
+    --user-bubble: #f9fafb;
+    --header-footer-bg: #e5e7eb;
+    --button-bg: #f3f4f6;
+    --button-hover: #9ca3af;
+    --button-border: #d1d5db;
+
+    --mm-badge: #e0e7ff;
+
+    --bg-außen-paint-tool:  #2d3748;
+    --bg-innen-paint-tool: #000;
+
+    --footer-radius: 6px;
+    --footer-blau: #3b82f6;
+    --footer-purpel: #8b5cf6;
+    --footer-rot: #ef4444;
+    --footer-gelb: #f59e0b;
+
+    --bg-bubble-code-highlights: #4a5271;
+}
+
+[data-theme="dark"] {
+    --bg-primary: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    --bg-secondary: #2d3748;
+    --bg-tertiary: #4a5568;
+    --bg-input: #2d3748;
+
+    --text-secondary: #cbd5e0;
+
+    --border-color: #4a5568;
+
+    --primary-color: #5a67d8;
+    --primary-gradient: linear-gradient(135deg, #5a67d8 0%, #805ad5 100%);
+    --secondary-color: #4a5568;
+
+    --btn-border-light: #4b5563;
+    --btn-border-dark: #6b7280;
+
+    --mm-badge: #312e81;
+
+    --bg-außen-paint-tool: #111;
+    --bg-innen-paint-tool: #000;
+
+    --text-primary: #f7fafc;
+    --text-muted: #9ca3af;
+    --bot-bubble: #111827;
+    --user-bubble: #374151;
+    --header-footer-bg: #2d3748;
+    --button-bg: #e5e7eb;
+    --button-hover: #374151;
+    --button-border: #d1d5db;
+
+    --bg-bubble-code-highlights: #161b22;
+}
+
+/* GLOBAL */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background var(--transition-speed) ease;
+}
+
+.app-header,
+.app-footer {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* CHAT */
+#chatArea {
+    background: transparent;
+}
+
+/* INPUT */
+#userInput {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* BUTTONS & SELECT */
+button {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--button-border);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+select {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--button-border);
+  padding: 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover, select:hover {
+    box-shadow: var(--shadow-medium);
+    background: var(--button-hover);
+}
+
+/* Back Button */
+.back-button {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    box-shadow: var(--shadow-light);
+    transition: all var(--transition-speed) ease;
+    flex-shrink: 0;
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.back-button i {
+    font-size: 1rem;
+}
+
+
+/* Theme Toggle Button */
+.page-theme-toggle {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--btn-border-light);
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    box-shadow: var(--shadow-light);
+    transition: all var(--transition-speed) ease;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .page-theme-toggle {
+    border-color: var(--btn-border-dark);
+}
+
+.page-theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+    background: var(--button-hover);
+}
+
+.page-theme-toggle i {
+    font-size: 1rem;
+}

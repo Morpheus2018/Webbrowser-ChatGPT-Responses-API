@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatGPT API</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dark-styles.css" />
+  <link rel="stylesheet" href="css/bubbles-styles.css" />
+  <link rel="stylesheet" href="css/all.min.css" />
+  <link rel="stylesheet" href="css/model-manager.css" />
+  <link rel="stylesheet" href="css/api-key-settings.css">
+  <link rel="stylesheet" href="css/vector_store_manager.css" />
+  <link rel="stylesheet" href="css/footer-setting.css">
+  <link rel="stylesheet" href="css/responses-inputs.css">
+  <link rel="stylesheet" href="css/responses-image-dall-engine.css">
+  <link rel="stylesheet" href="css/customization-tools.css">
+  <link rel="stylesheet" href="css/paint-mask-tool.css">
+  <link rel="stylesheet" href="css/responses-image-api-engine.css">
+  <link rel="stylesheet" href="css/bubble-actions.css">
+	<link rel="stylesheet" href="css/code-highlight.css">
+  <link rel="stylesheet" href="css/responses-tools.css">
+  <link rel="stylesheet" href="css/video-api.css">v
+	<link rel="stylesheet" href="css/libs/github-dark.min.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+
+<body>
+
+<header class="app-header">
+  <button class="back-button" onclick="window.location.href='../index.html'">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <h1 style="margin-right:auto;">ChatGPT Responses API</h1>
+
+  <button id="pageThemeToggle" class="page-theme-toggle">
+    <i class="fas fa-moon"></i>
+  </button>
+</header>
+
+<main id="chatArea">
+  <div id="messages"></div>
+</main>
+
+<div id="inputSection" class="input-center">
+  <!-- Preview Leiste -->
+  <textarea id="userInput" rows="1" placeholder="Nachricht an ChatGPT..."></textarea> 
+
+  <div class="input-actions">
+
+	<div class="tool-menu">
+	  <button id="toolsMenuBtn" class="tool-button" title="Tools">
+		<i class="fas fa-wrench"></i> Tools
+	  </button>
+
+	  <div id="toolsDropdown" class="tools-dropdown">
+		<button id="fileBrowseBtn"><i class="fas fa-folder-open"></i> Datei durchsuchen</button>
+
+		<button id="fileAnalyzeBtn">
+		  <i class="fas fa-file"></i> PDF Analyse
+		</button>
+		<button id="imageAnalyzeBtn">
+		  <i class="fas fa-image"></i> Bilder Analyse
+		</button>
+		<input type="file" id="imageInput" accept="image/*" hidden>
+		<input type="file" id="fileInput" accept=".pdf,application/pdf" hidden>
+
+		<button id="videoGenBtn">
+		  <i class="fas fa-video"></i> Video API
+		</button>
+
+		<button id="imageGenBtn">
+		  <i class="fas fa-paintbrush"></i> Responses API Tool
+		</button>
+
+		<button id="imageGPTGenBtn">
+		  <i class="fas fa-paintbrush"></i> Image API
+		</button>
+
+		<button id="openImgGenModalBtn">
+		  <i class="fas fa-wand-magic-sparkles"></i> Image API DALL·E
+		</button>
+
+	  </div>
+	</div>
+
+	<!-- unsichtbarer File Input -->
+	<input type="file" id="hiddenFileInput" hidden />
+
+
+	<button id="webSearchBtn" class="tool-button" title="Web-Suche aktivieren">
+	  <i class="fas fa-globe"></i> Web-Suche
+	</button>
+    <button id="clearBtn" class="clear-button" title="Chat leeren">
+      <i class="fas fa-trash"></i> 
+    </button>
+    <button id="sendBtn" class="send-button" title="Senden">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Custom Confirm Modal Chat leeren -->
+<div id="confirmOverlay" class="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <h2 id="confirmTitle" class="modal-title">
+	  <i class="fas fa-trash"></i>
+	  <span id="confirmTitleText">Chatverlauf löschen titl</span>
+	</h2>
+
+    <p class="modal-text">
+      ⚠️ Wirklich den gesamten Chatverlauf löschen?
+    </p>
+
+    <div class="modal-actions">
+      <button id="confirmCancelBtn" class="modal-btn cancel">
+        Abbrechen
+      </button>
+
+	  <!-- NEU (standard hidden) -->
+	  <button id="confirmExtraBtn" class="modal-btn">
+		Neue Datei auswählen
+	  </button>
+      <button id="confirmOkBtn" class="modal-btn danger">
+        Ja, XXXX
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- API Key Settings Modal -->
+<div id="apiKeyModal" class="modal-overlay" hidden>
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2><i class="fas fa-key"></i> API-Schlüssel & Modus</h2>
+      <button class="modal-close" id="apiKeyCloseBtn">&times;</button>
+    </div>
+
+    <!-- Aktueller Status -->
+    <div class="api-status-box" id="apiStatusBox">
+      <div>Aktueller Modus: <strong id="infoMode">–</strong></div>
+      <div>Key-Quelle: <strong id="infoSource">–</strong></div>
+      <div id="infoKeyRow" hidden>Key: <strong id="infoKey">–</strong></div>
+    </div>
+
+    <div class="mode-selector">
+      <button class="mode-btn" data-mode="demo">
+        <i class="fas fa-play-circle"></i><br>Demo-Modus
+      </button>
+      <button class="mode-btn" data-mode="local">
+        <i class="fas fa-globe"></i><br>Browser
+      </button>
+      <button class="mode-btn" data-mode="config">
+        <i class="fas fa-cog"></i><br>config.js
+      </button>
+    </div>
+
+    <!-- Demo -->
+    <div class="info" id="demoInfo" hidden>
+      <i class="fas fa-info-circle"></i>
+      Demo-Modus – es werden keine API-Anfragen gestellt!
+      <button class="action-btn" id="activateDemoBtn">
+        <i class="fas fa-check-circle"></i> Aktivieren
+      </button>
+    </div>
+
+    <!-- Browser -->
+    <div id="apiKeyLocalSection" hidden>
+      <label>OpenAI API-Key</label>
+
+      <div class="key-input-row">
+        <input type="password" id="apiKeyInput" placeholder="sk-..." title="OpenAI API-Key eingeben" />
+        <button id="toggleKeyBtn" class="icon-btn" title="Verbergen">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button id="saveKeyBtn" class="icon-btn" title="Speichern">
+          <i class="fas fa-save"></i>
+        </button>
+      </div>
+
+      <div class="key-actions">
+        <button id="deleteKeyBtn" title="API Key löschen">
+          <i class="fas fa-trash"></i> API Key löschen
+        </button>
+        <button id="testKeyBtn" title="API Key testen">
+          <i class="fas fa-vial"></i> Key testen
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Config -->
+    <div class="info" id="configSection" hidden>
+      <i class="fas fa-info-circle"></i>
+       API-Key wird aus <strong>config.js</strong> verwendet. 
+      <button class="action-btn" id="activateConfigBtn">
+        <i class="fas fa-check-circle"></i> Aktivieren
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- UI Dialog Modal (Alert / Confirm) -->
+<div id="uiDialogOverlay" class="modal-overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="uiDialogTitle">
+    <div class="modal-header">
+      <h2 id="uiDialogTitle"><i id="uiDialogIcon" class="fas fa-info-circle"></i> Hinweis</h2>
+      <button class="modal-close" id="uiDialogCloseBtn">&times;</button>
+    </div>
+
+    <div class="ui-dialog-body">
+      <p id="uiDialogMessage" class="ui-dialog-message"></p>
+    </div>
+
+    <div id="uiDialogActions" class="ui-dialog-actions">
+      <!-- Buttons werden per JS gesetzt -->
+    </div>
+  </div>
+</div>
+
+
+<!-- Model Manager Modal -->
+<div id="modelManagerOverlay" class="modal-overlay" hidden>
+  <div class="model-manager">
+
+    <!-- HEADER (sticky) -->
+    <div class="mm-header">
+      <h2>Modell auswählen</h2>
+      <button id="mmCloseBtn">✕</button>
+    </div>
+
+    <!-- BODY (scroll) -->
+    <div class="mm-list" id="mmList">
+      <!-- Modelle werden per JS gerendert -->
+    </div>
+
+    <!-- FOOTER (sticky) -->
+    <div class="mm-footer" id="mmFooter">
+      <!-- Aktuelles Modell / Session Infos -->
+    </div>
+
+  </div>
+</div>
+
+<!-- Vector Store Manager -->
+<div id="vsOverlay" class="vs-overlay" hidden>
+  <div class="vs-modal">
+
+    <div class="vs-header">
+      <span>Vector Store Manager</span>
+      <button id="vsCloseBtn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="vsContent" class="vs-layout">
+      <div class="vs-left" id="vsLeft"></div>
+      <div class="vs-right" id="vsRight">
+        Vector Store auswählen, um Verwaltung anzuzeigen
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Vector Store Dialog Overlay -->
+<!-- Vector Store Dialog (Alert / Confirm) -->
+<div id="vsDialogOverlay" class="vs-overlay" hidden>
+  <div class="vs-modal" style="width:420px;height:auto;">
+
+    <div class="vs-header">
+      <span id="vsDialogTitle">Hinweis</span>
+      <button id="vsDialogClose">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div style="padding:1rem;font-size:0.9rem;line-height:1.5;" id="vsDialogMessage"></div>
+
+    <div style="padding:0.75rem;display:flex;gap:0.5rem;justify-content:flex-end;">
+      <button id="vsDialogCancel" class="vs-action-btn" hidden>Abbrechen</button>
+      <button id="vsDialogOk" class="vs-action-btn">OK</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================================
+     Settings Modal Fenster
+========================================================= -->
+<div id="settingsOverlay" class="settings-overlay" hidden>
+  <div class="settings-modal">
+    <!-- Header -->
+    <div class="settings-header">
+      <div class="settings-title">
+        <i class="fas fa-sliders-h"></i>
+        <h2>Settings</h2>
+      </div>
+      <button id="settingsCloseBtn" class="settings-close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+<!-- Content -->
+<div class="settings-content">
+<div class="settings-section">
+  <div class="settings-section-title">Responses API Tool</div>
+  <!-- File Search -->
+  <div class="settings-row">
+    <label for="maxResultsInput">
+      File Search max Ergebnisse
+    </label>
+    <input type="number" id="maxResultsInput" min="1" max="50" step="1" value="2">
+  </div>
+  <!-- Max Output Tokens -->
+  <div class="settings-row">
+    <label for="maxTokensInput">Max Output Tokens</label>
+    <input type="number" id="maxTokensInput" min="100" max="128000" step="100" value="4000">
+  </div>
+  <!-- Temperature -->
+  <div class="settings-row">
+    <label for="temperatureInput">Temperature</label>
+    <input type="number" id="temperatureInput" min="0" max="2" step="0.1" value="1">
+  </div>
+  <!-- Top P -->
+  <div class="settings-row">
+    <label for="topPInput">Top P</label>
+    <input type="number" id="topPInput" min="0" max="1" step="0.05" value="1">
+  </div>
+  <!-- Parallel Tool Calls + Stream Toggle -->
+<div class="settings-row settings-toggle-row">
+
+  <button id="parallelToolsToggleBtn" class="settings-stream" title="Parallel Tool Calls umschalten">
+    Parallel Tool Calls: ON
+  </button>
+
+  <button id="streamToggleBtn" class="settings-stream" title="Streaming umschalten">
+    Stream: ON
+  </button>
+
+	<button id="toggleTimestampBtn" class="settings-stream" title="Zeitstempel umschalten">
+		Zeitstempel: ON
+	</button>
+
+</div>
+</div>
+
+<!-- IndexedDB -->
+<div class="settings-section">
+  <div class="settings-section-title">Indexed DB · Local Storage</div>
+
+  <div class="settings-row settings-toggle-row">
+
+    <button id="idbImageCount" class="settings-stream" disabled>
+      Images: 0
+    </button>
+
+    <button id="idbStorageSize" class="settings-stream" disabled>
+      Größe: 0 KB
+    </button>
+
+    <button id="idbClearBtn" class="settings-stream">
+      IndexedDB löschen
+    </button>
+  </div>
+  <div class="settings-row settings-toggle-row">
+
+    <button id="lsChatCount" class="settings-stream" disabled>
+      Chats: 0
+    </button>
+
+    <button id="lsStorageSize" class="settings-stream" disabled>
+      Größe: 0 KB
+    </button>
+
+    <button id="lsClearBtn" class="settings-stream" title="Local Storage löschen">
+      Local Storage löschen
+    </button>
+
+  </div>
+</div>
+</div>
+    <!-- Footer -->
+    <div class="settings-footer">
+      <button id="settingsCancelBtn" class="settings-cancel">
+        Abbrechen
+      </button>
+
+      <button id="settingsSaveBtn" class="settings-save">
+        Speichern
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     DALL·E Image Manager Modal
+========================================================= -->
+<!-- Image Generation Modal (hidden by default) -->
+<div id="imgGenOverlay" hidden>
+  <div class="imggen-modal" role="dialog" aria-modal="true" aria-labelledby="imgGenTitle">
+    <div class="imggen-header">
+      <div class="imggen-title">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <h2 id="imgGenTitle">Image generation DALL·E</h2>
+      </div>
+
+      <button id="imgGenCloseBtn" title="Schließen">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="imggen-body">
+
+<div class="dall-api-help dall-api-help-warning">
+  <strong>Hinweis:</strong> Die DALL·E Modelle sind veraltet und werden laut aktueller OpenAI-Doku am <strong>12. Mai 2026</strong> eingestellt.
+  <a
+    href="https://developers.openai.com/api/docs/guides/image-generation"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="dall-api-help-link"
+  >
+    Offizielle Doku
+  </a>
+</div>
+
+      <!-- DALL·E 2 -->
+      <div class="imggen-section">
+        <div class="imggen-section-title">DALL·E 2</div>
+
+        <div class="imggen-grid">
+          <button class="imggen-item" data-model="dall-e-2" data-quality="standard" data-size="256x256">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.016</div>
+            </div>
+            <div class="imggen-item-meta">256 × 256</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-2" data-quality="standard" data-size="512x512">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.018</div>
+            </div>
+            <div class="imggen-item-meta">512 × 512</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-2" data-quality="standard" data-size="1024x1024">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.020</div>
+            </div>
+            <div class="imggen-item-meta">1024 × 1024</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- DALL·E 3 -->
+      <div class="imggen-section">
+        <div class="imggen-section-title">DALL·E 3</div>
+
+        <div class="imggen-grid">
+          <button class="imggen-item" data-model="dall-e-3" data-quality="standard" data-size="1024x1024">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.04</div>
+            </div>
+            <div class="imggen-item-meta">1024 × 1024</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-3" data-quality="standard" data-size="1024x1792">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.08</div>
+            </div>
+            <div class="imggen-item-meta">1024 × 1792</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-3" data-quality="standard" data-size="1792x1024">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">Standard</div>
+              <div class="imggen-item-price">$0.08</div>
+            </div>
+            <div class="imggen-item-meta">1792 × 1024</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-3" data-quality="hd" data-size="1024x1024">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">HD</div>
+              <div class="imggen-item-price">$0.08</div>
+            </div>
+            <div class="imggen-item-meta">1024 × 1024</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-3" data-quality="hd" data-size="1024x1792">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">HD</div>
+              <div class="imggen-item-price">$0.12</div>
+            </div>
+            <div class="imggen-item-meta">1024 × 1792</div>
+          </button>
+
+          <button class="imggen-item" data-model="dall-e-3" data-quality="hd" data-size="1792x1024">
+            <div class="imggen-item-top">
+              <div class="imggen-item-title">HD</div>
+              <div class="imggen-item-price">$0.12</div>
+            </div>
+            <div class="imggen-item-meta">1792 × 1024</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="imggen-footer">
+      <button id="imgGenCancelBtn" class="imggen-btn secondary">Abbrechen</button>
+      <button id="imgGenSelectBtn" class="imggen-btn primary" disabled>Auswählen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================
+     Image GPT Modal Fenster Menü
+====================================================== -->
+<div id="imgGPTOverlay" hidden>
+
+  <div class="imggpt-modal">
+
+    <!-- Header -->
+    <div class="imggpt-header">
+      <div class="imggpt-title">
+        <i class="fas fa-image"></i>
+        <h2>Image API Einrichtung </h2>
+      </div>
+
+      <button id="imgGPTCloseBtn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="imggpt-body">
+
+      <!-- MODEL -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Model</div>
+
+        <div class="imggpt-grid">
+
+          <div class="imggpt-item"
+               data-type="model"
+               data-value="gpt-image-1.5">
+            <div class="imggpt-item-title">GPT Image 1.5</div>
+            <div class="imggpt-item-meta">Neueste Generation</div>
+          </div>
+
+          <div class="imggpt-item"
+               data-type="model"
+               data-value="gpt-image-1">
+            <div class="imggpt-item-title">GPT Image 1</div>
+            <div class="imggpt-item-meta">Stabil & hochwertig</div>
+          </div>
+
+          <div class="imggpt-item"
+               data-type="model"
+               data-value="gpt-image-1-mini">
+            <div class="imggpt-item-title">GPT Image Mini</div>
+            <div class="imggpt-item-meta">Schnell & günstiger</div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- QUALITY -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Quality</div>
+
+        <div class="imggpt-grid">
+
+          <div class="imggpt-item" data-type="quality" data-value="low">
+            <div class="imggpt-item-title">Low</div>
+          </div>
+
+          <div class="imggpt-item " data-type="quality" data-value="medium">
+            <div class="imggpt-item-title">Medium</div>
+          </div>
+
+          <div class="imggpt-item" data-type="quality" data-value="high">
+            <div class="imggpt-item-title">High</div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- SIZE -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Size</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item" data-type="size" data-value="auto">
+            <div class="imggpt-item-title">Auto</div>
+            <div class="imggpt-item-meta">auto</div>
+          </div>
+          <div class="imggpt-item active" data-type="size" data-value="1024x1024">
+            <div class="imggpt-item-title">Quadrat</div>
+            <div class="imggpt-item-meta">1024x1024</div>
+          </div>
+
+          <div class="imggpt-item" data-type="size" data-value="1536x1024">
+            <div class="imggpt-item-title">Landschaft</div>
+            <div class="imggpt-item-meta">1536x1024</div>
+          </div>
+
+          <div class="imggpt-item" data-type="size" data-value="1024x1536">
+            <div class="imggpt-item-title">Porträt</div>
+            <div class="imggpt-item-meta">1024x1536</div>
+          </div>
+
+        </div>
+      </div>
+
+<!-- OUTPUT FORMAT -->
+<div class="imggpt-section">
+  <div class="imggpt-section-title">Format</div>
+
+  <div class="imggpt-grid">
+    <div class="imggpt-item" data-type="output_format" data-value="png">
+      <div class="imggpt-item-title">PNG</div>
+    </div>
+
+    <div class="imggpt-item" data-type="output_format" data-value="jpeg">
+      <div class="imggpt-item-title">JPEG</div>
+    </div>
+
+    <div class="imggpt-item" data-type="output_format" data-value="webp">
+      <div class="imggpt-item-title">WebP</div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKGROUND -->
+<div class="imggpt-section">
+  <div class="imggpt-section-title">Background</div>
+
+  <div class="imggpt-grid">
+
+    <div class="imggpt-item" data-type="background" data-value="auto">
+      <div class="imggpt-item-title">Auto</div>
+    </div>
+
+    <div class="imggpt-item" data-type="background" data-value="transparent">
+      <div class="imggpt-item-title">Transparent</div>
+      <div class="imggpt-item-meta" hidden>nur PNG/WebP</div>
+    </div>
+
+    <div class="imggpt-item" data-type="background" data-value="opaque">
+      <div class="imggpt-item-title">Normal</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPRESSION -->
+<div class="imggpt-section">
+  <div class="imggpt-section-title">Compression</div>
+
+  <div class="imggpt-grid">
+    <div class="imggpt-item" data-type="output_compression" data-value="25">
+      <div class="imggpt-item-title">25%</div>
+      <div class="imggpt-item-meta" hidden>nur JPEG/WebP</div>
+    </div>
+
+    <div class="imggpt-item" data-type="output_compression" data-value="50">
+      <div class="imggpt-item-title">50%</div>
+      <div class="imggpt-item-meta" hidden>nur JPEG/WebP</div>
+    </div>
+
+    <div class="imggpt-item" data-type="output_compression" data-value="75">
+      <div class="imggpt-item-title">75%</div>
+      <div class="imggpt-item-meta" hidden>nur JPEG/WebP</div>
+    </div>
+
+    <div class="imggpt-item" data-type="output_compression" data-value="90">
+      <div class="imggpt-item-title">90%</div>
+      <div class="imggpt-item-meta" hidden>nur JPEG/WebP</div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD / EDIT / MASK -->
+<div class="imggpt-section">
+  <div class="imggpt-section-title">Input Images</div>
+
+  <div class="imggpt-grid">
+    <div class="imggpt-item" data-type="mode" data-value="edit">
+      <div class="imggpt-item-title">Bild ergänzen</div>
+      <div class="imggpt-item-meta">Bild hochladen</div>
+    </div>
+
+    <div class="imggpt-item" data-type="mode" data-value="reference">
+      <div class="imggpt-item-title">Referenzbilder</div>
+      <div class="imggpt-item-meta">Mehrere Bilder</div>
+    </div>
+
+    <div class="imggpt-item" data-type="fidelity_toggle" data-value="on">
+      <div class="imggpt-item-title">Details Bewahren</div>
+      <div class="imggpt-item-meta">Eingabetreue</div>
+    </div>
+
+    <div class="imggpt-item" data-type="mask_action" data-value="upload">
+      <div class="imggpt-item-title">Maske Upload</div>
+      <div class="imggpt-item-meta">Maske hochladen</div>
+    </div>
+
+    <div class="imggpt-item" data-type="mask_action" data-value="paint">
+      <div class="imggpt-item-title">Maske Paint</div>
+      <div class="imggpt-item-meta">Maske malen</div>
+    </div>
+
+    <!-- STREAM TOGGLE -->
+    <div class="imggpt-item" data-type="stream_toggle" data-value="on">
+      <div class="imggpt-item-title">Streaming</div>
+      <div class="imggpt-item-meta">Live Vorschau</div>
+    </div>
+  </div>
+
+  <!-- INPUT FIDELITY TOGGLE -->
+  <div class="imggpt-section">
+    <div class="imggpt-section-title">Input fidelity</div>
+
+    <div class="imggpt-grid" id="imggptFidelityLevels" hidden>
+      <div class="imggpt-item" data-type="input_fidelity" data-value="low">
+        <div class="imggpt-item-title">Low</div>
+      </div>
+
+      <div class="imggpt-item" data-type="input_fidelity" data-value="high">
+        <div class="imggpt-item-title">High</div>
+      </div>
+    </div>
+
+    <!-- STREAMING -->
+    <div class="imggpt-section">
+      <div class="imggpt-section-title" title="Bild Live Vorschau">Stream Partial Images</div>
+       <div class="imggpt-grid">
+            <!-- PARTIAL IMAGES 1 -->
+            <div class="imggpt-item disabled" data-type="partial_images" data-value="1">
+              <div class="imggpt-item-title">1</div>
+              <div class="imggpt-item-meta" hidden>Partial</div>
+            </div>
+
+            <!-- PARTIAL IMAGES 2 -->
+            <div class="imggpt-item disabled" data-type="partial_images" data-value="2">
+              <div class="imggpt-item-title">2</div>
+              <div class="imggpt-item-meta" hidden>Partial</div>
+            </div>
+
+            <!-- PARTIAL IMAGES 3 -->
+            <div class="imggpt-item disabled" data-type="partial_images" data-value="3">
+              <div class="imggpt-item-title">3</div>
+              <div class="imggpt-item-meta" hidden>Partial</div>
+            </div>
+       </div>
+</div>
+
+
+</div>
+
+  <div class="imggpt-upload-row">
+    <input id="imgGPTFileInput" type="file" accept="image/*" hidden>
+    <button id="imgGPTPickFilesBtn" class="imggpt-btn secondary" type="button">
+      <i class="fas fa-folder-open"></i> Bilder auswählen
+    </button>
+    <span id="imgGPTFilesInfo" class="imggpt-upload-info">Keine Dateien</span>
+  </div>
+
+	<div id="imgGPTMaskSection" hidden>
+		<div class="imggpt-upload-row">
+		  <input id="imgGPTMaskInput" type="file" accept="image/*" hidden>
+		  <button id="imgGPTPickMaskBtn" class="imggpt-btn secondary" type="button">
+		    <i class="fas fa-brush"></i> Maske auswählen
+		  </button>
+		  <span id="imgGPTMaskInfo" class="imggpt-upload-info">Keine Maske</span>
+		</div>
+	</div>
+
+</div>
+
+<!-- MINI PAINT MASK PANEL -->
+<div id="imgGPTPaintPanel" class="imggpt-paint-panel" hidden>
+
+  <!-- CANVAS BLOCK -->
+  <div class="paint-canvas-container">
+    <canvas id="imgGPTPaintCanvas"></canvas>
+  </div>
+
+  <!-- CONTROL BLOCK -->
+  <div class="paint-control-container">
+
+    <div class="paint-tools-row">
+			<button  class="paint-text-btn" id="imgGPTToolDraw" type="button" class="active" title="Maske Malen">
+				<i class="fa-solid fa-paintbrush"></i>
+				<span class="btn-label">Malen</span>
+			</button>
+
+			<button  class="paint-text-btn" id="imgGPTToolErase" type="button" title="Radieren">
+				<i class="fa-solid fa-eraser"></i>
+				<span class="btn-label">Radieren</span>
+			</button>
+
+			<button  class="paint-text-btn" id="imgGPTUndoBtn" type="button" title="Ein Schritt Zurück">
+				<i class="fa-solid fa-rotate-left"></i>
+				<span class="btn-label">Zurück</span>
+			</button>
+
+			<button  class="paint-text-btn" id="imgGPTClearMaskBtn" type="button" title="Maske Löschen">
+				<i class="fa-solid fa-trash"></i>
+				<span class="btn-label">Löschen</span>
+			</button>
+
+			<button id="imgGPTRefreshBaseBtn" type="button" title="Basisbild neu laden">
+				<i class="fas fa-rotate-left"></i>
+			</button>
+
+			<button id="imgGPTSaveMaskBtn" type="button" title="Maske speichern">
+				<i class="fa-solid fa-floppy-disk"></i>
+			</button>
+
+			<button id="imgGPTLoadMaskBtn" type="button" title="Maske hochladen">
+				<i class="fas fa-upload"></i>
+			</button>
+
+			<input type="file" id="imgGPTMaskFileInput" accept="image/png" hidden>
+
+			<button id="imgGPTExpandPaintBtn" type="button" title="Vergrößern">
+				<i class="fas fa-expand"></i>
+			</button>
+		  </div>
+
+		  <div class="paint-slider-row">
+		    <label>Pinselgröße</label>
+		    <input type="range" id="imgGPTBrushSize" min="5" max="120" value="25">
+		    <span id="imgGPTBrushSizeLabel">25px</span>
+		  </div>
+
+		  <div class="paint-slider-row">
+		    <label>Overlay</label>
+		    <input type="range" id="imgGPTOverlayOpacity" min="0" max="100" value="50">
+		    <span id="imgGPTOverlayLabel">50%</span>
+		  </div>
+
+		  <div class="paint-apply-row">
+		    <button id="imgGPTApplyMaskBtn" class="imggpt-btn primary" type="button">
+		      Maske übernehmen
+		    </button>
+		    <span id="imgGPTMaskStatus" class="paint-status">
+		      Keine Maske
+		    </span>
+		  </div>
+  </div>
+
+</div>
+
+<!-- AUSWAHL BEREICH MENÜ ENDE -->
+</div>
+
+    <!-- Footer -->
+    <div class="imggpt-footer">
+      <button id="imgGPTCancelBtn" class="imggpt-btn secondary">
+        Abbrechen
+      </button>
+
+      <button id="imgGPTSelectBtn" class="imggpt-btn primary" disabled>
+        Auswählen
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- Image GPT Modal Fenster MENÜ ENDE -->
+
+<!-- =========================================================
+     Image GPT Usage Modal
+========================================================= -->
+<div id="imgUsageOverlay" hidden>
+
+  <div class="imgusage-modal" role="dialog" aria-modal="true">
+
+    <!-- Header -->
+    <div class="imgusage-header">
+
+      <div class="imgusage-title">
+        <i class="fas fa-coins"></i>
+        <h2>Image API Usage</h2>
+      </div>
+
+      <button id="imgUsageCloseBtn">
+        <i class="fas fa-xmark"></i>
+      </button>
+
+    </div>
+
+    <!-- Body -->
+    <div class="imgusage-body">
+      <pre id="imgUsageContent"></pre>
+    </div>
+
+    <!-- Footer -->
+    <div class="imgusage-footer">
+      <button id="imgUsageOkBtn">OK</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+     Image GPT Tool Generation Fenster Menü
+====================================================== -->
+<div id="imgGenToolOverlay" hidden>
+  <div class="imggpt-modal">
+    <!-- Header -->
+    <div class="imggpt-header">
+      <div class="imggpt-title">
+        <i class="fas fa-image"></i>
+        <h2>Responses API Tool Image Einrichtung</h2>
+      </div>
+
+      <button id="imgGenToolCloseBtn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="imggpt-body">
+      <!-- ACTION -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Action</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item active" data-type="action" data-value="auto">
+            <div class="imggpt-item-title" title="Standard">Auto</div>
+            <div class="imggpt-item-meta" hidden>Standard</div>
+          </div>
+
+          <div class="imggpt-item" data-type="action" data-value="generate">
+            <div class="imggpt-item-title" title="Neu erzeugen">Generieren</div>
+            <div class="imggpt-item-meta" hidden>Neu erzeugen</div>
+          </div>
+
+          <div class="imggpt-item" data-type="action" data-value="edit">
+            <div class="imggpt-item-title" title="Bild editieren">Bearbeiten</div>
+            <div class="imggpt-item-meta" hidden>Bild editieren</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUALITY -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Quality</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item active" data-type="quality" data-value="low">
+            <div class="imggpt-item-title">Low</div>
+          </div>
+
+          <div class="imggpt-item " data-type="quality" data-value="medium">
+            <div class="imggpt-item-title">Medium</div>
+          </div>
+
+          <div class="imggpt-item" data-type="quality" data-value="high">
+            <div class="imggpt-item-title">High</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIZE -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Size</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item" data-type="size" data-value="auto">
+            <div class="imggpt-item-title">Auto</div>
+            <div class="imggpt-item-meta">auto</div>
+          </div>
+
+          <div class="imggpt-item active" data-type="size" data-value="1024x1024">
+            <div class="imggpt-item-title">Quadrat</div>
+            <div class="imggpt-item-meta">1024x1024</div>
+          </div>
+
+          <div class="imggpt-item" data-type="size" data-value="1536x1024">
+            <div class="imggpt-item-title">Landschaft</div>
+            <div class="imggpt-item-meta">1536x1024</div>
+          </div>
+
+          <div class="imggpt-item" data-type="size" data-value="1024x1536">
+            <div class="imggpt-item-title">Porträt</div>
+            <div class="imggpt-item-meta">1024x1536</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMAT -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Format</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item active" data-type="format" data-value="png">
+            <div class="imggpt-item-title">PNG</div>
+          </div>
+
+          <div class="imggpt-item" data-type="format" data-value="jpeg">
+            <div class="imggpt-item-title">JPEG</div>
+          </div>
+
+          <div class="imggpt-item" data-type="format" data-value="webp">
+            <div class="imggpt-item-title">WebP</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKGROUND -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Background</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item active" data-type="background" data-value="auto">
+            <div class="imggpt-item-title">Auto</div>
+          </div>
+
+          <div class="imggpt-item" data-type="background" data-value="transparent">
+            <div class="imggpt-item-title">Transparent</div>
+          </div>
+
+          <div class="imggpt-item" data-type="background" data-value="opaque">
+            <div class="imggpt-item-title">Normal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPRESSION active-->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Compression</div>
+
+        <div class="imggpt-grid" id="imgGenCompressionGrid">
+          <div class="imggpt-item compression-item compression-disabled"
+            data-type="output_compression"
+            data-value="25">
+            <div class="imggpt-item-title">25%</div>
+          </div>
+
+          <div class="imggpt-item compression-item compression-disabled"
+            data-type="output_compression"
+            data-value="50">
+            <div class="imggpt-item-title">50%</div>
+          </div>
+
+          <div class="imggpt-item compression-item compression-disabled"
+            data-type="output_compression"
+            data-value="75">
+            <div class="imggpt-item-title">75%</div>
+          </div>
+
+          <div class="imggpt-item compression-item compression-disabled"
+            data-type="output_compression"
+            data-value="90">
+            <div class="imggpt-item-title">90%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTIAL IMAGES -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title" title="Bild Live Vorschau">Stream Partial Images</div>
+
+        <div class="imggpt-grid" id="imgGenPartialImagesGrid">
+          <div class="imggpt-item partial-images-item"
+            data-type="partial_images"
+            data-value="1">
+            <div class="imggpt-item-title">1</div>
+          </div>
+
+          <div class="imggpt-item partial-images-item"
+            data-type="partial_images"
+            data-value="2">
+            <div class="imggpt-item-title">2</div>
+          </div>
+
+          <div class="imggpt-item partial-images-item"
+            data-type="partial_images"
+            data-value="3">
+            <div class="imggpt-item-title">3</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUT IMAGES -->
+      <div class="imggpt-section">
+        <div class="imggpt-section-title">Input Images</div>
+
+        <div class="imggpt-grid">
+          <div class="imggpt-item" id="imgGenInputImagesToggle" data-type="input_fidelity_tool_button">
+            <div class="imggpt-item-title">Bild ergänzen</div>
+            <div class="imggpt-item-meta">Referenz hochladen</div>
+          </div>
+
+          <div class="imggpt-item compression-disabled"
+               id="imgGenMaskToggle"
+               aria-disabled="true" data-type="input_fidelity_tool_button">
+            <div class="imggpt-item-title">Maske Upload</div>
+            <div class="imggpt-item-meta">Maske hochladen</div>
+          </div>
+
+          <div class="imggpt-item compression-disabled" id="imgGenInputFidelityToggle" aria-disabled="true" data-type="input_fidelity_tool_button">
+            <div class="imggpt-item-title">Details Bewahren</div>
+            <div class="imggpt-item-meta">Eingabetreue</div>
+          </div>
+        <!-- imggpt-grid ENDE -->
+        </div>
+
+        <!-- INPUT FIDELITY -->
+        <div class="imggpt-section">
+          <div class="imggpt-section-title">Input fidelity</div>
+          <div class="imggpt-grid">
+            <div class="imggpt-item compression-disabled input-fidelity-item"
+                 data-type="input_fidelity"
+                 data-value="low">
+              <div class="imggpt-item-title">Low</div>
+            </div>
+
+            <div class="imggpt-item compression-disabled input-fidelity-item"
+                 data-type="input_fidelity"
+                 data-value="high">
+              <div class="imggpt-item-title">High</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INPUT IMAGES UPLOAD -->
+        <div class="imggpt-upload-row">
+          <input id="imgGenInputImagesInput" type="file" accept="image/*" multiple hidden>
+
+          <button id="imgGenInputImagesPickBtn" class="imggpt-btn secondary" type="button" disabled>
+            <i class="fas fa-folder-open"></i> Bilder auswählen
+          </button>
+
+          <div id="imgGenInputImagesMeta" class="imggpt-upload-info">Deaktiviert</div>
+        </div>
+
+        <!-- INPUT MASKE UPLOAD -->
+        <!-- INPUT MASKE ALTERNATIV IMMER SICHTBAR 				 -->
+				<div id="imgGenMaskSection" class="imggpt-upload-row" hidden>
+					<input id="imgGenMaskInput" type="file" accept="image/*" hidden>
+
+					<button
+						id="imgGenPickMaskBtn"
+						class="imggpt-btn secondary"
+						type="button">
+						<i class="fas fa-brush"></i> Maske auswählen
+					</button>
+
+					<div id="imgGenMaskInfo" class="imggpt-upload-info">Keine Maske</div>
+				</div>
+      <!-- imggpt-upload-row ENDE -->
+      </div>
+
+    <!-- Body ENDE -->
+    </div>
+
+    <!-- Footer -->
+    <div class="imggpt-footer">
+      <button id="imgGenToolCancelBtn" class="imggpt-btn secondary">
+        Abbrechen
+      </button>
+
+      <button id="imgGenToolSelectBtn" class="imggpt-btn primary">
+        Auswählen
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ======================================================
+     Video API Generation Fenster Menü
+====================================================== -->
+<div id="videoApiOverlay" hidden>
+  <div class="video-api-modal" role="dialog" aria-modal="true" aria-labelledby="videoApiTitle">
+    <div class="video-api-header">
+      <div class="video-api-title" id="videoApiTitle">
+        <i class="fas fa-video"></i>
+        <span>Video API Einstellungen</span>
+      </div>
+
+
+  <button type="button" class="video-api-icon-btn" id="videoApiCloseBtn" title="Fenster schließen" aria-label="Fenster schließen">
+    <i class="fas fa-xmark"></i>
+  </button>
+    <!-- 
+      <div class="video-api-status-pill" id="videoApiStatusPill">
+        <i class="fas fa-circle"></i>
+        <span>Inaktiv</span>
+      </div> ALTERNATIVE -->
+    </div>
+
+<div class="video-api-body">
+<div class="video-api-help video-api-help-warning">
+  <strong>Hinweis:</strong> Die Sora-2 Video-Generation-Modelle und die Videos API sind veraltet und werden laut aktueller OpenAI-Doku am <strong>24. September 2026</strong> eingestellt.
+  <a
+    href="https://developers.openai.com/api/docs/guides/video-generation"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="video-api-help-link"
+  >
+    Offizielle Doku
+  </a>
+</div>
+
+  <div class="video-api-grid">
+        <div class="video-api-field">
+          <label class="video-api-label" for="videoApiMode">Modus</label>
+          <select class="video-api-select" id="videoApiMode">
+            <option value="create">Create</option>
+            <option value="edit">Edit</option>
+            <option value="extend">Extend</option>
+            <option value="character">Character</option>
+          </select>
+        </div>
+
+<div class="video-api-field">
+  <label class="video-api-label" for="videoApiCharacterName">Character Name</label>
+  <input
+    class="video-api-input"
+    id="videoApiCharacterName"
+    type="text"
+    maxlength="80"
+    placeholder="z. B. Alfie"
+    autocomplete="off"
+  />
+</div>
+
+        <div class="video-api-field">
+          <label class="video-api-label" for="videoApiModel">Modell</label>
+          <select class="video-api-select" id="videoApiModel">
+            <option value="sora-2">sora-2</option>
+            <option value="sora-2-pro">sora-2-pro</option>
+          </select>
+        </div>
+
+        <div class="video-api-field">
+          <label class="video-api-label" for="videoApiSize">Größe</label>
+          <select class="video-api-select" id="videoApiSize">
+            <option value="1280x720">Landschaft: 720p 1280x720</option>
+            <option value="720x1280">Porträt: 720p 720x1280</option>
+            <option value="1792x1024">Landschaft: 1024p 1792x1024</option>
+            <option value="1024x1792">Porträt: 1024p 1024x1792</option>
+            <option value="1920x1080">Landschaft: 1080p 1920x1080</option>
+            <option value="1080x1920">Porträt: 1080p 1080x1920</option>
+          </select>
+        </div>
+
+				<div class="video-api-field">
+					<label class="video-api-label" for="videoApiSeconds">Sekunden</label>
+					<select class="video-api-select" id="videoApiSeconds">
+						<option value="4">4</option>
+						<option value="8">8</option>
+						<option value="12">12</option>
+						<option value="16">16</option>
+						<option value="20">20</option>
+					</select>
+				</div>
+
+        <div class="video-api-field">
+          <label class="video-api-label" for="videoApiPollIntervalMs">Polling Intervall (ms)</label>
+          <input class="video-api-input" id="videoApiPollIntervalMs" type="number" min="3000" step="1000" value="10000">
+        </div>
+    <!-- 
+        <div class="video-api-field full">
+          <label class="video-api-label" for="videoApiPromptPrefix">Prompt Prefix</label>
+          <textarea
+            class="video-api-textarea"
+            id="videoApiPromptPrefix"
+            placeholder="Optionaler Prefix, z. B. Stil, Kamera, Lighting, Motion..."
+          ></textarea>
+        </div> ALTERNATIV -->
+    <!--    <div class="video-api-field full">
+          <label class="video-api-check">
+            <input type="checkbox" id="videoApiEnabled">
+            <span>Video API aktivieren</span>
+          </label>
+        </div> -->
+				<div class="video-api-field full">
+        <div class="video-api-field">
+          <label class="video-api-check">
+            <input type="checkbox" id="videoApiAutoPollEnabled" checked>
+            <span>Auto-Polling aktivieren</span>
+          </label>
+        </div>
+        </div>
+
+				<div class="video-api-field full">
+					<label class="video-api-label">Referenz / Quelldatei</label>
+
+					<div class="video-api-asset-row">
+						<button type="button" class="video-api-btn" id="videoApiPickAssetBtn">
+						 <i class="fas fa-folder-open"></i> Datei auswählen
+						</button>
+
+						<div class="video-api-asset-info is-empty" id="videoApiAssetInfo">
+							<span class="video-api-asset-text" id="videoApiAssetText">Keine Datei ausgewählt.</span>
+							<button
+								type="button"
+								class="video-api-asset-clear"
+								id="videoApiAssetClearInlineBtn"
+								title="Auswahl löschen"
+								aria-label="Auswahl löschen"
+								hidden
+							>
+								❌
+							</button>
+						</div>
+					</div>
+
+					<input
+						type="file"
+						id="videoApiAssetInput"
+						hidden
+						accept="image/*,video/mp4"
+					>
+				</div>
+      </div>
+
+    <!-- 
+<div class="video-api-help">
+  <strong>Hinweis:</strong> Testmodus für die Video API.
+  Der Start erfolgt direkt aus diesem Fenster, noch ohne Chat-Integration.
+</div> -->
+
+<div class="video-api-test-panel">
+	<div class="video-api-field full">
+
+
+<div class="video-api-source-section">
+  <div class="video-api-source-group">
+    <div class="video-api-label">Quell-Video</div>
+    <div id="videoApiSourceVideoBox" class="video-api-source-box is-empty">
+      Keine gespeicherten Videos.
+    </div>
+  </div>
+
+  <div class="video-api-source-group">
+    <div class="video-api-label">Character</div>
+    <div id="videoApiCharacterBox" class="video-api-source-box is-empty">
+      Keine gespeicherten Characters.
+    </div>
+  </div>
+</div>
+
+		<div class="video-api-label-row">
+		  <label class="video-api-label" for="videoApiTestPrompt">Video Prompt</label>
+
+	<!--	  <div class="video-api-status-pill video-api-status-pill-inline" id="videoApiStatusPill">
+		    <i class="fas fa-circle"></i>
+		    <span>Inaktiv</span>
+		  </div> -->
+		</div>
+
+    <textarea
+      class="video-api-textarea"
+      id="videoApiTestPrompt"
+  		placeholder="Beschreibe hier dein Video. Beispiel: Cinematic tracking shot, soft morning light, realistic motion, detailed environment..."
+    ></textarea>
+  </div>
+
+  <div class="video-api-test-actions">
+    <button type="button" class="video-api-btn primary" id="videoApiStartTestBtn">
+      Video Generierung Starten
+    </button>
+
+    <button type="button" class="video-api-btn" id="videoApiStopPollingBtn" disabled hidden>
+      Polling stoppen
+    </button>
+  </div>
+
+  <div class="video-api-job-status" id="videoApiJobStatus" hidden>
+    <div class="video-api-job-line">
+      <span class="video-api-job-label">Status</span>
+      <span class="video-api-job-value" id="videoApiJobStatusText">–</span>
+    </div>
+
+    <div class="video-api-job-line">
+      <span class="video-api-job-label">Video ID</span>
+      <span class="video-api-job-value" id="videoApiJobIdText">–</span>
+    </div>
+
+<div class="video-api-job-line">
+  <span class="video-api-job-label">Video Quelle</span>
+  <span id="videoApiJobSourceText">–</span>
+</div>
+
+    <div class="video-api-job-line">
+      <span class="video-api-job-label">Fortschritt</span>
+      <span class="video-api-job-value" id="videoApiJobProgressText">0%</span>
+    </div>
+
+    <div class="video-api-job-line">
+      <span class="video-api-job-label">Meldung</span>
+      <span class="video-api-job-value" id="videoApiJobMessageText">Bereit.</span>
+    </div>
+
+    <div class="video-api-progress">
+      <div class="video-api-progress-bar" id="videoApiProgressBar"></div>
+    </div>
+
+    <div class="video-api-download-row">
+      <a
+        id="videoApiDownloadLink"
+        class="video-api-download-link"
+        href="#"
+        download
+        hidden
+      >
+        MP4 herunterladen
+      </a>
+    </div>
+
+<div class="video-api-preview-wrap" id="videoApiPreviewWrap" hidden>
+  <video
+    id="videoApiPreviewVideo"
+    class="video-api-preview-video"
+    controls
+    playsinline
+    preload="metadata"
+  ></video>
+</div>
+
+  </div>
+</div>
+
+
+    </div>
+
+		<div class="video-api-footer">
+			<div class="video-api-actions">
+				<button type="button" class="video-api-btn" id="videoApiResetBtn">
+				  Zurücksetzen
+				</button>
+				<button type="button" class="video-api-btn primary" id="videoApiSaveBtn">
+				  Speichern
+				</button>
+				<button type="button" class="video-api-btn" id="videoApiFooterCloseBtn">
+				  Abbrechen
+				</button>
+			</div>
+		</div>
+
+  </div>
+</div>
+
+    <!-- Video API ENDE -->
+<footer class="app-footer">
+  <div class="footer-center">
+                     <!-- Neues Modell Auswahl Menü -->
+	<span id="openModelManagerBtn" class="footer-accent-btn" title="Modell auswählen">
+	  <i class="fas fa-layer-group"></i>
+	  <span id="activeModelLabel">Modell</span>
+	</span>
+
+    <select id="modelSelect" class="footer-accent-select">
+      <option value="gpt-4o-mini">GPT-4o mini</option>
+      <option value="gpt-4o">GPT-4o</option>
+      <option value="gpt-4.1">GPT-4.1</option>
+      <option value="gpt-4.1-mini">GPT-4.1 mini</option>
+      <option value="gpt-5-nano">GPT-5 nano</option>
+      <option value="gpt-5">GPT-5</option>
+      <option value="gpt-5.2">GPT-5.2</option>
+      <option value="gpt-5.1-codex-mini">GPT-5.1 Codex mini</option>
+    </select>
+
+	<!-- Einstellungen Button -->
+	<div class="footer-settings-wrapper">
+
+	  <span id="settingsBtn" class="footer-accent-btn icon-only" title="Einstellungen">
+		<i class="fas fa-gear"></i>
+		<!-- <span>Einstellungen</span> -->
+	  </span>
+
+	  <!-- Popup Menü -->
+	  <div id="settingsMenu" class="settings-menu">
+
+		<button id="vectorStoreManagerBtn" class="settings-item" title="Vector Store Manager">
+		  <i class="fas fa-database"></i> Vector Store
+		</button>
+
+		<button id="menuSettingsBtn" class="settings-item" title="Einstellungen">
+		  <i class="fas fa-sliders-h"></i>Settings
+		</button>
+
+		<button class="settings-item" id="menuAboutBtn" title="Über">
+		  <i class="fas fa-info-circle"></i>About
+		</button>
+	  </div>
+	</div>
+
+    <span id="status" class="api-status footer-accent-btn api-idle">
+      <i class="fas fa-clock"></i>
+      <span class="api-text">API: Bereit</span>
+    </span>
+
+    <!-- Token Counter -->
+	<span class="footer-accent-btn token-counter" tabindex="0">
+
+	  <span class="token-in" title="INPUT">
+		<i class="fas fa-sign-in-alt"></i>
+		<strong id="tokensIn">0</strong>
+		<span class="token-label"></span> <!-- IN -->
+	  </span>
+
+	  <span class="token-out" title="OUTPUT">
+		<i class="fas fa-sign-out-alt"></i>
+		<strong id="tokensOut">0</strong>
+		<span class="token-label"></span>
+	  </span>
+
+	  <span class="token-total" title="TOTAL">
+		<i class="fas fa-hashtag"></i>
+		<strong id="tokensTotal">0</strong>
+		<span class="token-label"></span>
+	  </span>
+
+	 <span class="cost-chat" title="Gesamt Kosten">
+	   <i class="fas fa-dollar-sign"></i>
+	   <strong id="costUSD">0.00</strong>
+	 </span>
+     <span class="cost-reset" title="Token & Kosten zurücksetzen" id="resetSessionBtn">
+       <span class="token-label">
+       <i class="fas fa-rotate-left"></i>
+	   <strong class="token-label" >RESET</strong>
+       </span>
+	 </span>
+	</span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="script.js"></script>
+<script src="js/api_costs.js"></script>
+<script src="js/model-manager.js"></script>
+<script src="js/api-key-settings.js"></script>
+<script src="js/vector_store_manager.js"></script>
+<script src="js/footer-setting-menü.js"></script>
+<script src="js/responses-inputs.js"></script>
+<script src="js/customization-tools.js"></script>
+<script src="js/paint-mask-tool.js"></script>
+<script src="js/responses-image-api-engine.js"></script>
+<script src="js/responses-image-dall-engine.js"></script>
+<script src="js/video-api.js"></script>
+<script src="js/bubble-actions.js"></script>
+<script src="js/code-highlight.js"></script>
+<script src="js/libs/marked.min.js"></script>
+<script src="js/libs/highlight.min.js"></script>
+<script src="js/responses-tools.js"></script>
+</body>
+</html>
+
+

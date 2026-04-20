@@ -1,0 +1,306 @@
+/* =========================================================
+   Image Gen Modal – Overlay + Card
+   ========================================================= */
+#imgUsageOverlay,
+#imgGenOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wichtig: hidden muss wirklich ausblenden */
+#imgUsageOverlay[hidden],
+#imgGenOverlay[hidden] {
+  display: none !important;
+}
+.imgusage-modal,
+.imggen-modal {
+  width: min(560px, calc(100vw - 28px));
+  max-height: min(78vh, 560px);
+
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  color: var(--text-primary);
+  border-radius: 14px;
+  box-shadow: var(--shadow-heavy);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.imgusage-modal {
+  width: fit-content;
+}
+
+#imgUsageContent {
+  white-space: pre;
+}
+
+/* Header (sticky) */
+.imgusage-header,
+.imggen-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.6rem 1.1rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.imgusage-title,
+.imggen-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.imgusage-header h2,
+.imggen-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+#imgUsageCloseBtn,
+#imgGenCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.0rem;
+
+  cursor: pointer;
+  padding: 0;
+}
+
+#imgUsageCloseBtn:hover,
+#imgGenCloseBtn:hover {
+  color: var(--text-primary);
+}
+
+.imgusage-body,
+.imggen-body {
+  padding: 0.9rem 1.1rem 0.4rem;
+  overflow: auto;
+}
+
+.imggen-section {
+  margin-bottom: 0.9rem;
+}
+
+.imggen-section-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* Cards */
+.imggen-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+@media (max-width: 720px) {
+  .imggen-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .imggen-grid { grid-template-columns: 1fr; }
+}
+
+.imggen-item {
+  text-align: left;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  cursor: pointer;
+
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+}
+
+.imggen-item:hover {
+  background: color-mix(in srgb, var(--bg-tertiary) 85%, var(--primary-color));
+}
+
+.imggen-item:active {
+  transform: translateY(1px);
+}
+
+.imggen-item.active {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+.imggen-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.imggen-item-title {
+  font-weight: 600;
+}
+
+.imggen-item-price {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.imggen-item-meta {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.imgusage-footer,
+.imggen-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+
+  padding: 0.75rem 1.1rem;
+  background: var(--bg-secondary);
+/*  border-top: 1px solid var(--border-color); */
+}
+
+.imggen-btn {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-color: var(--button-border);
+}
+
+.imggen-btn.secondary {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.imggen-btn.secondary:hover {
+  background: var(--button-hover);
+}
+
+.imggen-btn.primary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--button-border);
+}
+
+.imggen-btn.primary:hover {
+  filter: brightness(0.95);
+  background: var(--primary-color);
+}
+
+.imggen-btn.primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Bild 
+.generated-image {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 6px;
+  display: block;
+}*/
+/* Standard: kompakt im Chat */
+.generated-image {
+  max-width: 500px;       /* 🔥 feste Chat-Breite */
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-top: 6px;
+  display: block;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Expanded */
+.generated-image.expanded {
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.img-cost-btn,
+.img-usage-btn,
+.img-expand-btn,
+.img-delete-btn,
+.img-save-btn {
+  margin-top: 6px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.img-usage-btn:hover,
+.img-expand-btn:hover,
+.img-save-btn:hover {
+  background: color-mix(in srgb, var(--bg-tertiary) 80%, var(--primary-color));
+}
+.img-delete-btn:hover {
+  background: var(--error-color, #ef4444);
+}
+
+.img-cost-btn:hover {
+  background: var(--bg-tertiary);
+  cursor: default;
+}
+
+.img-cost-btn,
+.img-usage-btn,
+.img-save-btn,
+.img-delete-btn,
+.img-expand-btn {
+  margin-left: 6px;
+}
+
+.dall-api-help {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+
+.dall-api-help-warning {
+  margin-bottom: 14px;
+  background: rgba(255, 193, 7, 0.08);
+  border-color: rgba(255, 193, 7, 0.22);
+}
+
+.dall-api-help-link {
+  display: inline-block;
+  margin-left: 8px;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.95;
+}
+
+.dall-api-help-link:hover {
+  opacity: 1;
+}

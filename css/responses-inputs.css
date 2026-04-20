@@ -1,0 +1,39 @@
+/* =========================================
+   Input Preview Bar
+========================================= */
+
+.input-preview-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+}
+
+.input-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background: var(--tool-bg, #2b2b2b);
+  border: 1px solid var(--tool-border, #444);
+
+  padding: 4px 8px;
+  border-radius: 6px;
+
+  font-size: 12px;
+}
+
+.input-preview-item i {
+  opacity: 0.8;
+}
+
+.input-preview-remove {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.input-preview-remove:hover {
+  opacity: 1;
+}
+

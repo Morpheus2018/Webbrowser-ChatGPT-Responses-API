@@ -1,0 +1,263 @@
+/* =========================================================
+   API Key Settings – Modal & Controls
+   Angepasst an aktuelles Design-System
+   ========================================================= */
+
+/* ===== Overlay ===== */
+#apiKeyModal.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:is(#apiKeyModal, #uiDialogOverlay)[hidden] {
+  display: none !important;
+}
+
+/* ===== Modal ===== */
+:is(#apiKeyModal, #uiDialogOverlay) .modal {
+  width: 100%;
+  max-width: 430px;
+
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+
+  border-radius: 16px;
+  border: 1px solid var(--button-border);
+
+/*  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.35),
+    inset var(--accent-width) 0 0 0 var(--primary-color); */
+
+  padding: 1.25rem 1.25rem 1.4rem;
+}
+
+/* ===== Header ===== */
+:is(#apiKeyModal, #uiDialogOverlay) .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 0.35rem;
+}
+
+:is(#apiKeyModal, #uiDialogOverlay) .modal-header h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+:is(#apiKeyModal, #uiDialogOverlay) .modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Einstellungen Überschreiben 
+:is(#apiKeyModal, #uiDialogOverlay) .modal-close {
+  border: none !important;
+  padding: 0 !important;
+} */
+
+:is(#apiKeyModal, #uiDialogOverlay) .modal-close:hover {
+  color: var(--text-primary);
+}
+
+
+/* ===== Mode Selector ===== */
+.ui-dialog-actions,
+.mode-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mode-btn {
+  flex: 1;
+
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+
+  border: 1px solid var(--button-border);
+  cursor: pointer;
+
+  transition: filter 0.15s ease, border-color 0.15s ease;
+}
+
+.mode-btn:hover {
+  filter: brightness(1.08);
+}
+
+.mode-btn.active {
+  border-color: var(--button-border);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--button-border);
+
+  background: var(--set-active);
+}
+
+.mode-btn:focus {
+  border-color: var(--set-active);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--set-active);
+  outline: none;
+}
+/* ===== Local API Key Section ===== */
+#apiKeyLocalSection {
+  margin-bottom: 0.75rem;
+}
+
+#apiKeyLocalSection label {
+  display: block;
+  margin-bottom: 0.25rem;
+
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+#apiKeyLocalSection input {
+  width: 100%;
+
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+
+  font-size: 0.85rem;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+
+  border: 1px solid var(--button-border);
+}
+
+#apiKeyLocalSection input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* ===== Key Preview ===== */
+.key-preview {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ===== Demo Info ===== */
+.info {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.65rem;
+
+  border-radius: 10px;
+  font-size: 0.8rem;
+
+  background: rgba(246, 173, 85, 0.15);
+  border: 1px solid rgba(246, 173, 85, 0.45);
+  color: var(--warning-color);
+}
+
+/* ===== Active Mode Info ===== */
+.api-info-box {
+  margin-top: 0.75rem;
+
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.api-info-box strong {
+  color: var(--text-primary);
+}
+/* ===== Status Box ===== */
+.api-status-box {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  border: 1px solid var(--button-border);
+  color: var(--text-secondary);
+  background: var(--bg-tertiary)
+}
+
+/* ===== Buttons ===== */
+.action-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.45rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  border: 1px solid var(--button-border);
+}
+
+/* ===== Browser Key UI ===== */
+.key-input-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.icon-btn {
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--button-border);
+  cursor: pointer;
+}
+
+.key-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.key-actions button {
+  flex: 1;
+  font-size: 0.7rem;
+  padding: 0.35rem;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--button-border);
+  cursor: pointer;
+}
+
+.ui-dialog-actions button:hover,
+.key-actions button:hover {
+  background: var(--button-hover);
+}
+
+/* ===== UI Dialog (Alert / Confirm) ===== */
+#uiDialogOverlay.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; /* über apiKeyModal */
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-dialog-actions {
+  display: flex;
+  justify-content: flex-end; /* rechts ausrichten */
+  gap: 0.5rem;               /* Abstand zwischen Buttons */
+}
+
+.ui-dialog-actions .btn.danger:hover {
+  filter: brightness(0.95);
+  background: var(--error-color, #ef4444);
+}
+
+

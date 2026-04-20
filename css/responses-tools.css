@@ -1,0 +1,106 @@
+/* Web-Suche Aktivierter Zustand */
+.tool-button.active {
+  background: rgba(104, 211, 145, 0.2);
+  box-shadow: inset 3px 0 0 var(--success-color);
+  border-color: var(--success-color);
+}
+
+/* Tool Menü */
+.tool-menu {
+  position: relative;
+}
+
+.tools-dropdown {
+  position: absolute;
+  bottom: 120%;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.4rem;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+
+  min-width: 180px;
+  white-space: nowrap;
+
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.tools-dropdown.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tools-dropdown button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  width: 100%;
+}
+
+.tools-dropdown button:hover {
+    box-shadow: var(--shadow-medium);
+    background: var(--button-hover);
+
+}
+
+/* Vector Store Datei Button */
+.input-analysis-file,
+.vectorstore-file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  width: fit-content;
+  max-width: 100%;
+
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+
+  font-size:0.7rem;
+  white-space: nowrap;
+}
+.input-analysis-file-remove,
+.vectorstore-file-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.6;
+  padding: 0;
+}
+.input-analysis-file-remove:hover,
+.vectorstore-file-remove:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: var(--error-color, #ef4444);
+}
+
+
+

@@ -1,0 +1,160 @@
+/* =========================================================
+   CODE BLOCK STYLE
+========================================================= */
+
+.code-block {
+  background: #0d1117;
+  border-radius: 8px;
+  padding: 14px;
+  margin: 10px 0;
+  overflow-x: auto;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid #30363d;
+}
+
+/* Inline Code optional */
+.bubble code {
+  background: var(--bg-bubble-code-highlights);
+
+  border: 1px solid var(--bot-color);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+/* =========================================================
+   MARKDOWN STYLE FÜR CHAT BUBBLES
+========================================================= */
+
+/* Überschriften */
+.bubble h1,
+.bubble h2,
+.bubble h3 {
+  margin: 8px 0 6px;
+  font-weight: 700;
+}
+
+/* Fett */
+.bubble strong {
+  font-weight: 700;
+}
+
+/* Listen */
+.bubble ul {
+  padding-left: 18px;
+  margin: 6px 0;
+}
+
+.bubble li {
+  margin: 4px 0;
+}
+
+/* Links */
+.bubble a {
+  color: #58a6ff;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+/* Codeblock */
+.bubble pre {
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+
+/* =========================================================
+   CHAT MARKDOWN RESET
+========================================================= */
+
+.bubble p {
+  white-space: pre-line;
+  margin: 0;
+}
+
+.bubble > *:first-child {
+  margin-top: 0;
+}
+
+.bubble > *:last-child {
+  margin-bottom: 0;
+}
+.bubble > :last-child {
+  margin-bottom: 0 !important;
+}
+/* Nur Abstand zwischen mehreren Elementen */
+.bubble p + p {
+  margin-top: 6px;
+}
+.bubble br {
+  margin: 0;
+}
+
+.bubble > p:last-of-type {
+  white-space: pre-line;
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   CODE BLOCK HEADER
+========================================================= */
+
+.code-block-wrapper {
+  position: relative;
+  margin: 10px 0;
+}
+
+/* Header oben rechts */
+.code-header {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(4px);
+
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+/* Nur bei Hover sichtbar */
+.code-block-wrapper:hover .code-header {
+  opacity: 1;
+}
+
+/* Sprache */
+.code-lang {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+
+  border-radius: 8px;
+  background: var(--bg-bubble-code-highlights);
+  color: #8b949e;
+
+  font-weight: 600;
+}
+
+/* Copy Button */
+.code-copy-btn {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px;
+}
+
+.code-copy-btn:hover {
+  color: var(--text-primary);
+}
+

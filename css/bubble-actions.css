@@ -1,0 +1,55 @@
+.text-bubble {
+  position: relative;
+}
+
+.bubble-delete-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  transform: translate(calc(50% - 40px), -50%);
+
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+
+  border-radius: 8px;
+  padding: 4px 4px;
+
+  cursor: pointer;
+  font-size: 0.75rem;
+
+  z-index: 5;
+
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  pointer-events: auto;
+}
+
+.bubble-delete-btn:hover {
+  background: var(--error-color, #ef4444);
+  color: white;
+}
+
+.text-bubble:hover .bubble-delete-btn {
+  opacity: 1;
+}
+
+.text-bubble:hover {
+  overflow: visible;
+}
+
+/* Zeiterfassung */
+.bubble-time {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+
+  opacity: 0.65;
+  pointer-events: none;
+  user-select: none;   /* verhindert markieren */
+}

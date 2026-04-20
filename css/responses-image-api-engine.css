@@ -1,0 +1,348 @@
+/* =========================================================
+   Image GPT Modal – Overlay + Card
+   (separate von DALL·E Engine)
+   ========================================================= */
+#imgGenToolOverlay,
+#imgGPTOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#imgGenToolOverlay[hidden],
+#imgGPTOverlay[hidden] {
+  display: none !important;
+}
+
+/* =========================================================
+   Modal Card
+   ========================================================= */
+.imggpt-modal {
+  width: min(560px, calc(100vw - 28px));
+  max-height: min(78vh, 560px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  color: var(--text-primary);
+  border-radius: 14px;
+  box-shadow: var(--shadow-heavy);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+.imggpt-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.1rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.imggpt-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.imggpt-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+#videoApiCloseBtn,
+#imgGenToolCloseBtn,
+#imgGPTCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.0rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+#videoApiCloseBtn:hover,
+#imgGenToolCloseBtn:hover,
+#imgGPTCloseBtn:hover {
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   Body
+   ========================================================= */
+.imggpt-body {
+  padding: 0.9rem 1.1rem 0.4rem;
+  overflow: auto;
+}
+
+.imggpt-section .imggpt-section {
+  margin-bottom: 0.4rem;
+}
+
+.imggpt-section-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+/* =========================================================
+   Grid
+   ========================================================= */
+.imggpt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+@media (max-width: 720px) {
+  .imggpt-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .imggpt-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.imggpt-grid:has(.imggpt-item[data-type="output_compression"]),
+.imggpt-grid:has(.imggpt-item[data-type="size"]) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.imggpt-grid:has(.imggpt-item[data-type="input_fidelity"]) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+	.imggpt-grid:has(.imggpt-item[data-type="output_compression"]),
+  .imggpt-grid:has(.imggpt-item[data-type="size"]) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .imggpt-grid:has(.imggpt-item[data-type="mask_action"]),
+	.imggpt-grid:has(.imggpt-item[data-type="input_fidelity_tool_button"]),
+	.imggpt-grid:has(.imggpt-item[data-type="partial_images"]),
+	.imggpt-grid:has(.imggpt-item[data-type="background"]),
+	.imggpt-grid:has(.imggpt-item[data-type="action"]),
+	.imggpt-grid:has(.imggpt-item[data-type="format"]),
+	.imggpt-grid:has(.imggpt-item[data-type="output_format"]),
+	.imggpt-grid:has(.imggpt-item[data-type="model"]),
+  .imggpt-grid:has(.imggpt-item[data-type="quality"]) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+/* =========================================================
+   Items
+   ========================================================= */
+
+.imggpt-item {
+  text-align: left;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.06s ease;
+}
+
+.imggpt-item:hover {
+  background:
+    color-mix(
+      in srgb,
+      var(--bg-tertiary) 85%,
+      var(--primary-color)
+    );
+}
+
+.imggpt-item:active {
+  transform: translateY(1px);
+}
+
+.imggpt-item.active {
+  border-color: var(--primary-color);
+  box-shadow:
+    inset 0 0 0 1px var(--primary-color);
+  background:
+    color-mix(
+      in srgb,
+      var(--primary-color) 18%,
+      transparent
+    );
+}
+
+.imggpt-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.imggpt-item-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.imggpt-item-meta {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Disabled State */
+.imggpt-item.disabled {
+  opacity: 0.45;
+  filter: grayscale(0.4);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* =========================================================
+   Footer
+   ========================================================= */
+
+.imggpt-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.75rem 1.1rem;
+  background: var(--bg-secondary);
+}
+
+.imggpt-btn {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-color: var(--button-border);
+}
+
+.imggpt-btn.secondary {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.imggpt-btn.secondary:hover {
+  background: var(--button-hover);
+}
+
+.imggpt-btn.primary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--button-border);
+}
+
+.imggpt-btn.primary:hover {
+  background: var(--primary-color);
+}
+
+.imggpt-btn.primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+#imgGenInputImagesPickBtn,
+#imgGPTPickFilesBtn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* =========================================================
+   Edit Images
+   ========================================================= */
+
+.imggpt-upload-row{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  margin-top:.55rem;
+}
+
+.imggpt-upload-info{
+  font-size:.8rem;
+  color: var(--text-secondary);
+}
+
+
+/* Input fidelity */
+.imggpt-hint{
+  margin-top: .5rem;
+  font-size: .78rem;
+  color: var(--text-secondary);
+  line-height: 1.25;
+}
+
+.imggpt-item.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(60%);
+}
+
+.imggpt-item.disabled.active {
+  box-shadow: none;
+}
+.imggpt-item.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+/* Image GPT Datein entfernen */
+.imggpt-file-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 4px 8px;
+  border-radius: 8px;
+
+  border: 1px solid var(--button-border);
+  background: var(--bg-tertiary);
+
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.file-remove-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.6;
+  padding: 0;
+}
+
+.file-remove-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: var(--error-color, #ef4444);
+}
+
+.imggpt-file-row:hover {
+  border-color: var(--primary-color);
+}
+
+.imggpt-upload-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: .8rem;
+  color: var(--text-secondary);
+}
+.imggpt-upload-info {
+  flex: 1;
+  min-width: 0;
+}

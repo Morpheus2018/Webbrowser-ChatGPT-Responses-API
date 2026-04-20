@@ -1,0 +1,205 @@
+
+/* =========================================================
+   Model Manager – Modal Layout
+   ========================================================= */
+
+#modelManagerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.model-manager {
+  width: 350px;
+  max-width: calc(100vw - 2rem);
+  height: 70vh;
+
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 14px;
+  box-shadow: var(--shadow-heavy);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =========================================================
+   Header (sticky)
+   ========================================================= */
+
+.mm-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.5rem 1.25rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mm-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+#mmCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #9ca3af);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+#mmCloseBtn:hover {
+  color: var(--text-primary, #fff);
+}
+
+/* =========================================================
+   Model List (scrollable)
+   ========================================================= */
+
+.mm-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+}
+
+.mm-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mm-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* =========================================================
+   Model Item
+   ========================================================= */
+
+.mm-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.5rem;
+
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.mm-item:hover {
+  background: color-mix(in srgb, var(--bg-tertiary) 85%, var(--primary-color));
+}
+
+.mm-item.active {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+/* =========================================================
+   Item Header
+   ========================================================= */
+
+.mm-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mm-item-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.mm-check {
+  margin-left: 0.5rem;
+  color: var(--accent-color, #4f8cff);
+}
+
+.mm-item-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* =========================================================
+   Capabilities
+   ========================================================= */
+
+.mm-capabilities {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.mm-badge {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: var(--mm-badge);
+  color: var(--text-primary);
+}
+
+
+/* Gilt NUR solange KEIN dark theme aktiv ist */
+:root:not([data-theme="dark"]) .mm-item.active .mm-badge {
+  background: color-mix(in srgb, var(--primary-color) 35%, white);
+}
+
+/* =========================================================
+   Pricing & Session
+   ========================================================= */
+
+.mm-pricing {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.mm-pricing span {
+  font-size: 0.7rem;
+}
+
+.mm-session {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--success-color);
+}
+
+/* =========================================================
+   Footer (sticky)
+   ========================================================= */
+
+.mm-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8rem;
+
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+

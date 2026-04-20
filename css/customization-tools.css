@@ -1,0 +1,233 @@
+/* =========================================================
+   SETTINGS MODAL OVERLAY
+========================================================= */
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.settings-overlay[hidden] {
+  display: none !important;
+}
+
+
+/* =========================================================
+   MODAL CONTAINER
+========================================================= */
+
+.settings-modal {
+  width: min(560px, calc(100vw - 28px));
+  max-height: min(78vh, 560px);
+
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  color: var(--text-primary);
+  border-radius: 14px;
+  box-shadow: var(--shadow-heavy);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.settings-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.6rem 1.1rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.settings-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.0rem;
+
+  cursor: pointer;
+  padding: 0;
+}
+
+.settings-close:hover {
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+.settings-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.settings-section {
+  margin-bottom: 0.9rem;
+}
+
+.settings-section-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-row label {
+  font-size: 14px;
+}
+
+.settings-row input {
+  width: 80px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  color: var(--text-primary);
+  outline: none;
+}
+.settings-row input:focus {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+
+  padding: 0.75rem 1.1rem;
+  background: var(--bg-secondary);
+}
+
+.settings-cancel,
+.settings-save {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-color: var(--button-border);
+}
+
+.settings-save:hover {
+  background: var(--primary-color);
+}
+
+.settings-cancel:hover {
+  background: var(--button-hover);
+}
+
+.settings-cancel {
+  background: transparent;
+}
+/* =========================================================
+   TOGGLE BUTTON ROW (Parallel Tools + Stream)
+========================================================= */
+.settings-toggle-row {
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+/* Toggle Buttons */
+
+.settings-stream {
+  min-width: 170px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  border-radius: 10px;
+  border: 1px solid var(--button-border);
+
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* Hover */
+.settings-stream:hover {
+  background: var(--button-hover);
+}
+
+/* Active State */
+.settings-stream.active {
+  border-color: var(--primary-color);
+  box-shadow:
+    inset 0 0 0 1px var(--primary-color);
+  background:
+    color-mix(
+      in srgb,
+      var(--primary-color) 18%,
+      transparent
+    );
+}
+/* Responsive */
+@media (max-width: 520px) {
+
+  .settings-toggle-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .settings-stream {
+    width: 100%;
+  }
+
+}
+/* Indexed DB · Local Storage */
+#lsClearBtn:hover,
+#idbClearBtn:hover {
+  background: var(--error-color);
+} 
+
+#lsChatCount:hover,
+#lsStorageSize:hover,
+#idbImageCount:hover,
+#idbStorageSize:hover {
+  cursor: default;
+  background: transparent;
+  box-shadow: none;
+}

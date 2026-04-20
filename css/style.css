@@ -1,0 +1,536 @@
+/* ===== Reset & Base ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f1117;
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#modelSelect { display: none; }
+
+/* ===== Header ===== */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 1000;
+}
+
+.app-header h1 {
+  color: var(--primary-color);
+}
+
+/* ===== Footer ===== */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #1a1a1a;
+
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 1000;
+}
+
+
+.footer-center {
+  width: 80%;
+  max-width: 800px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px; /* kleiner Standard-Abstand */
+}
+
+/* ===== Chat Area ===== */
+#chatArea {
+  position: fixed;
+  top: 64px;
+  left: 20px;
+  right: 0;
+  bottom: 170px; /* Platz für Eingabe + Abstand */
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* ===== Input Section ===== */
+#inputSection {
+  width: 80%;
+  max-width: 800px;
+  transition: all 0.3s ease;
+}
+
+/* Start-Zustand (Mitte) */
+.input-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Nach Chat-Beginn */
+.input-bottom {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 76px; /* abstand zum Footer 64px Footer + 12px Abstand  */
+}
+
+/* Input Styling */
+#userInput {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  border-radius: 10px;
+  border: none;
+  background: #1f2937;
+  color: #fff;
+  resize: none;
+
+  box-sizing: border-box;          /* 🔴 SEHR WICHTIG */
+
+  min-height: calc(1.4em + 0.8rem); /* 1 Zeile + Padding */
+  max-height: calc((1.4em * 6) + 0.8rem); /* 6 Zeilen + Padding */
+
+  overflow-y: hidden;              /* ⛔ Standard: keine Scrollbar */
+}
+
+.input-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* ===== Custom Confirm Modal Chat leren ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--button-border);
+  border-radius: 14px;
+  padding: 1.1rem 1.1rem 1rem;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+}
+
+.modal-title {
+  margin: 0 0 0.6rem 0;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-text {
+  margin: 0 0 1.2rem 0;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.modal-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--button-border);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.modal-btn.cancel:hover {
+  background: var(--button-hover);
+}
+
+.modal-btn.danger {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--button-border);
+}
+
+.modal-btn.danger:hover {
+  filter: brightness(0.95);
+  background: var(--error-color, #ef4444);
+}
+
+.modal-overlay[hidden] {
+  display: none !important;
+}
+/* ===== Custom Confirm Modal Chat leren ENDE ===== */
+
+/* ===== API Healthcheck ===== */
+.api-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  user-select: none;
+  white-space: nowrap;
+
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--secondary-color);
+
+  cursor: pointer;
+}
+
+/* Icon */
+.api-status i {
+  font-size: 0.85rem;
+}
+
+/* ===== Zustände ===== */
+
+/* Bereit / Prüfen */
+.api-idle {
+  background: rgba(246, 173, 85, 0.15);
+  border-color: rgba(246, 173, 85, 0.45);
+  color: var(--warning-color);
+}
+
+/* Online */
+.api-online {
+  background: rgba(104, 211, 145, 0.15);
+  border-color: rgba(104, 211, 145, 0.45);
+  color: var(--success-color);
+}
+
+/* Fehler */
+.api-error {
+  background: rgba(252, 129, 129, 0.15);
+  border-color: rgba(252, 129, 129, 0.45);
+  color: var(--error-color);
+}
+
+/* Demo-Modus */
+.api-idle.api-demo {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.45);
+  color: var(--primary-color);
+}
+
+.api-error i {
+  color: var(--error-color);
+}
+/* ===== API Healthcheck Status ENDE ===== */
+/* ===== Footer Buttons mit Accent-Streifen ===== */
+.footer-accent-btn {
+  position: relative;
+
+  padding: 0.35rem 0.75rem;
+  padding-left: calc(0.75rem + var(--accent-width));
+
+  border-radius: var(--footer-radius);
+
+  background: var(--bg-tertiary);
+  border: 1px solid transparent;
+
+  box-shadow: inset var(--accent-width) 0 0 0 transparent;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  user-select: none;
+  white-space: nowrap;
+}
+/* ===== Footer Buttons mit Accent-Streifen ENDE ===== */
+/* ===== Footer Accent Selec ===== */
+.footer-accent-btn {
+  padding: 0.35rem 0.75rem;
+  padding-left: calc(0.75rem + var(--accent-width));
+
+  border-radius: var(--footer-radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+
+  border: 1px solid var(--button-border);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--button-border);
+
+  cursor: pointer;
+}
+
+/* Hover / Focus */
+.footer-accent-btn:hover,
+.footer-accent-btn:focus {
+  border-color: var(--primary-color);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--primary-color);
+  outline: none;
+}
+/* ===== Footer Accent Select ENDE ===== */
+/* ===== API Footer Status Farben ===== */
+
+/* Bereit / Idle */
+.api-idle.footer-accent-btn {
+  background: rgba(246, 173, 85, 0.15);
+  border-color: rgba(246, 173, 85, 0.45);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--warning-color);
+  color: var(--warning-color);
+}
+
+/* Online */
+.api-online.footer-accent-btn {
+  background: rgba(104, 211, 145, 0.15);
+  border-color: rgba(104, 211, 145, 0.45);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--success-color);
+  color: var(--success-color);
+}
+
+/* Fehler */
+.api-error.footer-accent-btn {
+  background: rgba(252, 129, 129, 0.15);
+  border-color: rgba(252, 129, 129, 0.45);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--error-color);
+  color: var(--error-color);
+}
+
+/* Demo-Modus */
+.api-idle.api-demo.footer-accent-btn {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.45);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--primary-color);
+  color: var(--primary-color);
+}
+/* ===== API Footer Status Farben ENDE ===== */
+/* ===== Footer Accent Hover ===== */
+.footer-accent-btn:hover {
+  filter: brightness(1.08);
+}
+
+.footer-accent-btn:active {
+  filter: brightness(0.95);
+}
+/* ===== Footer Accent Hover ENDE ===== */
+
+/* ===== Token Counter (Footer) ===== */
+.token-counter.footer-accent-btn {
+  cursor: default;
+  opacity: 0.95;
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.45);
+  box-shadow: inset var(--accent-width) 0 0 0 var(--footer-purpel);
+
+  color: var(--text-primary);
+
+  margin-left: auto; /* nach rechts verschieben */
+  margin-right: 0.25rem; /* Abstand zum Rand */
+}
+
+/* ===== Token Counter Farben ===== */
+/* Zahl immer neutral */
+.cost-chat strong,
+.token-counter strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Kosten Reset */
+.cost-reset i,
+.cost-reset .token-label {
+  color: var(--footer-rot);
+  cursor: pointer;
+}
+
+/* Kosten */
+.cost-chat i,
+.cost-chat .token-label {
+  color: var(--footer-gelb);
+}
+
+/* IN */
+.token-in i,
+.token-in .token-label {
+  color: var(--footer-purpel);
+}
+
+/* OUT */
+.token-out i,
+.token-out .token-label {
+  color: var(--success-color);
+}
+
+/* TOTAL */
+.token-total i,
+.token-total .token-label {
+  color: var(--footer-blau);
+}
+
+.cost-chat,
+.cost-reset,
+.token-in,
+.token-out,
+.token-total {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.02rem;
+}
+
+/* Responsive Design */
+@media (max-width: 700px) {
+	.app-header h1 {
+		font-size: 1.2rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+/* Footer  Token Counter  */
+  .footer-center {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    justify-content: center;
+    align-items: center;
+    column-gap: 0.4rem;
+    row-gap: 0.4rem;
+  }
+
+  .app-footer {
+    height: auto;
+    min-height: 64px;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+  }
+
+  #chatArea {
+    bottom: 200px;
+  }
+
+  #inputSection.input-bottom {
+    bottom: 100px;
+  }
+
+  #openModelManagerBtn {
+    grid-column: 1;
+  }
+
+  .footer-settings-wrapper {
+    grid-column: 2;
+  }
+
+  #status {
+    grid-column: 3;
+  }
+
+  .token-counter.footer-accent-btn {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: 0;
+    width: auto;
+  }
+}
+
+/* Footer Animation */
+  .token-counter.footer-accent-btn {
+    overflow: hidden;
+    cursor: pointer;
+    padding-left: 0.35rem;
+    gap: 0.20rem;
+  }
+
+  .token-counter.footer-accent-btn:hover,
+  .token-counter.footer-accent-btn.is-expanded,
+  .token-counter.footer-accent-btn:focus-visible {
+    gap: 0.45rem;
+  }
+
+  .token-counter.footer-accent-btn .cost-chat,
+  .token-counter.footer-accent-btn .cost-reset {
+    flex: 0 0 auto;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    white-space: nowrap;
+  }
+
+  .token-counter.footer-accent-btn .token-in,
+  .token-counter.footer-accent-btn .token-out,
+  .token-counter.footer-accent-btn .token-total {
+    flex: 0 0 auto;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateX(8px);
+    margin-left: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    transition:
+      max-width 0.28s ease,
+      opacity 0.18s ease,
+      transform 0.28s ease,
+      margin-left 0.28s ease;
+  }
+
+  .token-counter.footer-accent-btn:hover .token-in,
+  .token-counter.footer-accent-btn:hover .token-out,
+  .token-counter.footer-accent-btn:hover .token-total,
+  .token-counter.footer-accent-btn.is-expanded .token-in,
+  .token-counter.footer-accent-btn.is-expanded .token-out,
+  .token-counter.footer-accent-btn.is-expanded .token-total,
+  .token-counter.footer-accent-btn:focus-visible .token-in,
+  .token-counter.footer-accent-btn:focus-visible .token-out,
+  .token-counter.footer-accent-btn:focus-visible .token-total {
+    max-width: 72px;
+    opacity: 1;
+    transform: translateX(0);
+    margin-left: 0.15rem;
+    pointer-events: auto;
+  }
+

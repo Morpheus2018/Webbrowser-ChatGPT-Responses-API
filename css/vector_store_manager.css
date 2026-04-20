@@ -1,0 +1,525 @@
+/* =========================================================
+   Overlay Steuerung
+   ========================================================= */
+.vs-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: none;
+}
+
+.vs-overlay.show {
+  display: block;
+}
+
+/* =========================================================
+   Modal
+   ========================================================= */
+.vs-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 920px;
+  max-width: 94vw;
+  height: 540px;
+
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+.vs-header {
+  padding: 0.5rem 1.25rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+#vsDialogClose,
+#vsCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.0rem;
+
+  cursor: pointer;
+  padding: 0;
+}
+
+#vsDialogClose:hover,
+#vsCloseBtn:hover {
+  color: var(--text-primary);
+}
+/* =========================================================
+   Layout
+   ========================================================= */
+.vs-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  height: 100%;
+}
+
+/* =========================================================
+   Linke Seite
+   ========================================================= */
+.vs-left {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  height: 95%;
+  overflow: hidden; /* wichtig */
+
+}
+
+.vs-left-header {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Scrollbarer Bereich für Stores Links */
+.vs-left-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 0.75rem;
+}
+/* Optional: schöne Scrollbar */
+.vs-left-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vs-left-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.vs-left-list::-webkit-scrollbar-thumb:hover {
+  background: var(--footer-blau);
+}
+
+/* =========================================================
+   Store Card
+   ========================================================= */
+.vs-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--button-border);
+  border-radius: 12px;
+  padding: 0.5rem 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.vs-card:hover {
+  background: color-mix(in srgb, var(--bg-tertiary) 85%, var(--primary-color));
+}
+
+.vs-stats-card:hover {
+  background: var(--bg-tertiary);
+  cursor: default;
+}
+
+.vs-card.active {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+/* ID + Status Zeile */
+.vs-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+/* Store ID */
+.vs-id {
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.85;
+  letter-spacing: 0.3px;
+}
+
+/* Status Badge */
+.vs-badge {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  border: 1px solid;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.vs-badge.ok {
+  color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.vs-badge.warn {
+  color: var(--warning-color);
+  border-color: var(--warning-color);
+}
+
+.vs-badge.err {
+  color: var(--error-color);
+  border-color: var(--error-color);
+}
+
+/* Infos */
+.vs-info {
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.vs-info b {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* =========================================================
+   Rechte Seite (Verwaltung)
+   ========================================================= */
+.vs-right {
+  display: flex;
+  flex-direction: column;
+  height: 95%;
+  overflow: hidden;
+  padding: 0; /* Header übernimmt Padding */
+  color: var(--text-primary);
+  font-style: normal;
+}
+
+.vs-right-header {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vs-action-btn,
+.vs-refresh-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--button-border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+}
+/*
+.vs-action-btn:hover,
+.vs-refresh-btn:hover {
+  border-color: var(--primary-color);
+} */
+
+.vs-manage-box {
+  margin: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--button-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.vs-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vs-input {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--button-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.vs-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+
+.vs-danger-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--error-color);
+  color: var(--error-color);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+}
+
+.vs-danger-btn:hover {
+  background: color-mix(in srgb, var(--error-color) 15%, transparent);
+}
+
+/* Dateien Bereich */
+.vs-files-area {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 0.75rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vs-files-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.2rem;
+}
+
+/* Scrollbarer Bereich Dateien Rechts */
+.vs-files-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 15px;
+}
+
+.vs-files-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vs-files-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.vs-files-list::-webkit-scrollbar-thumb:hover {
+  background: var(--footer-blau);
+}
+
+/* Datei Card */
+.vs-file-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.vs-file-card.selected {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 1px var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+.vs-file-checkwrap {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.15rem;
+}
+
+.vs-file-check {
+  display: none;
+}
+
+.vs-file-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  cursor: pointer;
+}
+
+.vs-file-check:checked + .vs-file-box {
+  border-color: var(--primary-color);
+  box-shadow: inset 0 0 0 2px var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 70%, transparent);
+}
+
+.vs-file-body {
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.vs-file-title {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.vs-file-status {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.vs-file-line {
+  opacity: 0.95;
+}
+
+.vs-stats-card {
+  font-size: 0.8rem;
+}
+
+
+/* VS Dialog: Header ausblenden */
+#vsDialogOverlay .vs-header {
+  display: none;
+}
+
+/* Dialog kompakter machen */
+#vsDialogOverlay .vs-modal {
+  padding-top: 0.4rem;
+}
+
+/* Message-Titelbereich (optional schöner Abstand) */
+#vsDialogOverlay #vsDialogMessage {
+  padding-top: 0.8rem;
+}
+
+/* =========================================================
+   Responsive Design
+   ========================================================= */
+@media (max-width: 760px) {
+  .vs-modal {
+    width: 94vw;
+    max-width: 84vw;
+    height: 84vh;
+    max-height: 79vh;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -46%);
+    border-radius: 14px;
+  }
+
+  .vs-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .vs-left {
+    height: 36%;
+    min-height: 180px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .vs-right {
+    height: 64%;
+    min-height: 0;
+  }
+
+  .vs-left-header,
+  .vs-right-header {
+    padding: 0.55rem 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .vs-left-list,
+  .vs-files-area {
+    padding: 0.55rem;
+  }
+
+  .vs-manage-box {
+    margin: 0.55rem;
+    padding: 0.55rem;
+    gap: 0.5rem;
+  }
+
+  .vs-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .vs-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    padding: 0.38rem 0.5rem;
+    font-size: 0.82rem;
+    border-radius: 9px;
+  }
+
+  .vs-action-btn,
+  .vs-refresh-btn,
+  .vs-danger-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: fit-content;
+    padding: 0.36rem 0.52rem;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    border-radius: 9px;
+    white-space: nowrap;
+  }
+
+  .vs-danger-btn {
+    flex: 1 1 0;
+  }
+
+  .vs-card {
+    padding: 0.45rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .vs-topline {
+    margin-bottom: 0.65rem;
+    gap: 0.45rem;
+    align-items: flex-start;
+  }
+
+  .vs-id {
+    font-size: 0.68rem;
+    line-height: 1.3;
+    word-break: break-all;
+  }
+
+  .vs-badge,
+  .vs-mini-badge {
+    font-size: 0.6rem;
+    padding: 0.18rem 0.38rem;
+  }
+
+  .vs-info,
+  .vs-file-body,
+  .vs-stats-card,
+  .vs-files-meta {
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+
+  .vs-file-card {
+    gap: 0.45rem;
+  }
+
+  .vs-file-box {
+    width: 16px;
+    height: 16px;
+  }
+
+  .vs-files-list {
+    padding-right: 8px;
+  }
+}
