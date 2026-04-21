@@ -102,10 +102,15 @@ function updateVideoStartButtonLabel() {
     window.videoApiSettings?.mode ||
     VIDEO_DEFAULT_SETTINGS.mode;
 
+  const labelsByMode = {
+    create: "Video Generierung Starten",
+    edit: "Video Bearbeiten",
+    extend: "Video Erweitern",
+    character: "Character Erstellen"
+  };
+
   startBtn.textContent =
-    mode === "character"
-      ? "Character Erstellen"
-      : "Video Generierung Starten";
+    labelsByMode[mode] || labelsByMode.create;
 }
 
 function applyVideoApiSettingsToUi(settings) {
